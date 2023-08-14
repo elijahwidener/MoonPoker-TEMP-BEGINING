@@ -4,6 +4,8 @@
 #include <ctime>
 #include <random>
 
+//Card class will be used to create a Deck class, 
+        //Might need to use Card class in the future?
 class Card{
     public: 
         enum Rank {Two = 2, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace};
@@ -19,9 +21,10 @@ class Card{
         Suit s;
 };
 
+
 class Deck{
     public:
-        //itterate through all combos of suit and rank to make an array of cards
+        //Constructor itterates through all combos of suit and rank to make an array of cards
         Deck() { 
             for (int s = Card::Club; s <= Card::Spade; ++s) {
                 for (int r = Card::Two; r <= Card::Ace; ++r) {
@@ -36,10 +39,10 @@ class Deck{
             std::shuffle(cards.begin(), cards.end(), g); // Shuffle the cards using the generator
         }
 
-
+        
         Card deal(){
-            Card topCard = cards.back();
-            cards.pop_back();
+            Card topCard = cards.back();//deal card, 
+            cards.pop_back(); //remove card from deck once delt
             return topCard;
         }
 
