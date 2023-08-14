@@ -11,6 +11,12 @@ class Card{
         enum Rank {Two = 2, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace};
         enum Suit {Club, Diamond, Heart, Spade};
 
+    friend std::ostream& operator<<(std::ostream& os, const Card& card) {
+        const char* ranks[] = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
+        const char* suits[] = { "c", "d", "h", "s" };
+        os << ranks[card.r - 2] << suits[card.s];
+        return os; 
+    }
     //Constructor with values set to r and s 
     Card (Rank r, Suit s) : r(r), s(s) {}
 
@@ -28,25 +34,27 @@ class Deck{
         Deck() { 
             for (int s = Card::Club; s <= Card::Spade; ++s) {
                 for (int r = Card::Two; r <= Card::Ace; ++r) {
-                    cards.push_back(Card((Card::Rank)r, (Card::Suit)s));
+                    decksCards.push_back(Card((Card::Rank)r, (Card::Suit)s));
                 }
             }
         }
 
-        void shuffle() {
+        void shuffle(std::vector<Card> muckedCards) {
+            decksCards.insert(decksCards.end(), muckedCards.begin(), muckedCards.end());
             std::random_device rd; // Obtain a random number from hardware
             std::mt19937 g(rd()); // Seed the generator
-            std::shuffle(cards.begin(), cards.end(), g); // Shuffle the cards using the generator
+            std::shuffle(decksCards.begin(), decksCards.end(), g); // Shuffle the cards using the generator
         }
 
         
         Card deal(){
-            Card topCard = cards.back();//deal card, 
-            cards.pop_back(); //remove card from deck once delt
+            Card topCard = decksCards.back();//deal card, 
+            decksCards.pop_back(); //remove card from deck once delt
             return topCard;
         }
 
     private:
-        std::vector<Card> cards;
+        std::vector<Card> muckedCards;
+        std::vector<Card> decksCards;
 
 };
