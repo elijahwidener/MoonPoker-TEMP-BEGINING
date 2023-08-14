@@ -12,12 +12,6 @@ class Card{
     //Constructor with values set to r and s 
     Card (Rank r, Suit s) : r(r), s(s) {}
 
-/*    friend std::ostream& operator<<(std::ostream& os, const Card& card){
-        const char* ranks[] = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
-        //Think about changing the suit to be a something more math-y? This could make the program faster since not always ever suit is at play
-        const char* suits[] = {"Club", "Diamond", "Heart", "Spade"};
-    }
-*/
     
     private:
 
@@ -52,4 +46,4 @@ class Deck{
     private:
         std::vector<Card> cards;
 
-}
+};
