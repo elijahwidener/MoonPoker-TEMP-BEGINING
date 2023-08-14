@@ -7,21 +7,21 @@ void playGame(Player&, vector<Player>&, vector<Card>&, Deck&, int);
 main(){
 
     Deck deck;
-    int desiredNumCards = 2;
+    int NLHNumCards = 2;
     std::vector<Player> players;
     std::vector<Card> muckedCards;
 
 
     //Create the dealer, which will also be the board
-    Player dealer(deck, 5);
+    Player dealer(deck, 0);
 
     //create 6 players
     for(int i = 0; i < 6; i++) {
-        players.push_back(Player(deck, desiredNumCards));
+        players.push_back(Player(deck, 0));
     }
 
     for (int k = 0; k < 3; k++){
-        playGame(dealer, players, muckedCards, deck, desiredNumCards);
+        playGame(dealer, players, muckedCards, deck, NLHNumCards);
     }
 
     return 0;
@@ -29,13 +29,9 @@ main(){
 }
 
 
-void playGame(Player& dealer, vector<Player>& players, vector<Card>& muckedCards, Deck& deck, int desiredNumCards){
+void playGame(Player& dealer, vector<Player>& players, vector<Card>& muckedCards, Deck& deck, int NLHNumCards){
 
-    //Muck player and dealer cards
-    dealer.muckCards(5, muckedCards);
-    for(int i = 0; i < 6; i++) {
-        players[i].muckCards(desiredNumCards, muckedCards);
-    }
+    
 
     //Shuffle the deck with the mucked cards
     deck.shuffle(muckedCards);
@@ -44,17 +40,23 @@ void playGame(Player& dealer, vector<Player>& players, vector<Card>& muckedCards
 
     //deal all cards
     for (int i = 0; i< 6; i++){
-        players[i].dealCards(desiredNumCards);
+        players[i].dealCards(NLHNumCards);
     }
     dealer.dealCards(5);
 
     //(FOR TESTING) Show cards then muck cards 
     for(int i = 0; i < 6; i++) {
-        players[i].showCards(desiredNumCards);
+        players[i].showCards(NLHNumCards);
     }
     
     //Show the board
     dealer.showCards(5);
+
+    //Muck player and dealer cards
+    dealer.muckCards(5, muckedCards);
+    for(int i = 0; i < 6; i++) {
+        players[i].muckCards(NLHNumCards, muckedCards);
+    }
 }
 
 
