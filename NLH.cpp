@@ -1,6 +1,5 @@
 #include "player\Player.h"
 
-//in the future make a game info enum which stores num players and num cards for each game
 
 void playGame(Player&, vector<Player>&, vector<Card>&, Deck&, int);
 
@@ -15,7 +14,7 @@ main(){
     //Create the dealer, which will also be the board
     Player dealer(deck, 0);
 
-    //create 6 players
+    //create 6 players with empty hands
     for(int i = 0; i < 6; i++) {
         players.push_back(Player(deck, 0));
     }
@@ -44,7 +43,7 @@ void playGame(Player& dealer, vector<Player>& players, vector<Card>& muckedCards
     }
     dealer.dealCards(5);
 
-    //(FOR TESTING) Show cards then muck cards 
+    //(FOR TESTING) Show cards 
     for(int i = 0; i < 6; i++) {
         players[i].showCards(NLHNumCards);
     }
