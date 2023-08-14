@@ -26,12 +26,11 @@ class Player{
             cout << endl;
         }
 
-        void muckCards(int numberOfCards, vector<Card> muckedCards){
+        void muckCards(int numberOfCards, vector<Card>& muckedCards){
             
-            //add the players hand to the muck
-            muckedCards.insert(muckedCards.end(), hand.begin(), hand.end());
-
+            //Add the mucked card to the mucked card vector, then remove it form the hand
             for(int i= 0; i < numberOfCards; i++ ){
+                muckedCards.push_back(hand.back());
                 hand.pop_back();
             }
         };

@@ -1,14 +1,8 @@
 #include "player\Player.h"
 
-
-//make the deck
-//shuffle the deck
-//make 6 players
-//make a board player
-//deal cards (5 to board, 2 to players)
 //in the future make a game info enum which stores num players and num cards for each game
 
-void playGame(Player, vector<Player>, vector<Card>, Deck, int);
+void playGame(Player&, vector<Player>&, vector<Card>&, Deck&, int);
 
 main(){
 
@@ -26,15 +20,22 @@ main(){
         players.push_back(Player(deck, desiredNumCards));
     }
 
-    playGame(dealer, players, muckedCards, deck, desiredNumCards);
-    
+    for (int k = 0; k < 3; k++){
+        playGame(dealer, players, muckedCards, deck, desiredNumCards);
+    }
 
     return 0;
 
 }
 
 
-void playGame(Player dealer, vector<Player> players, vector<Card> muckedCards, Deck deck, int desiredNumCards){
+void playGame(Player& dealer, vector<Player>& players, vector<Card>& muckedCards, Deck& deck, int desiredNumCards){
+
+    //Muck player and dealer cards
+    dealer.muckCards(5, muckedCards);
+    for(int i = 0; i < 6; i++) {
+        players[i].muckCards(desiredNumCards, muckedCards);
+    }
 
     //Shuffle the deck with the mucked cards
     deck.shuffle(muckedCards);
@@ -45,16 +46,15 @@ void playGame(Player dealer, vector<Player> players, vector<Card> muckedCards, D
     for (int i = 0; i< 6; i++){
         players[i].dealCards(desiredNumCards);
     }
+    dealer.dealCards(5);
 
     //(FOR TESTING) Show cards then muck cards 
     for(int i = 0; i < 6; i++) {
         players[i].showCards(desiredNumCards);
-        players[i].muckCards(desiredNumCards, muckedCards);
     }
     
-    //Show and much the board
+    //Show the board
     dealer.showCards(5);
-    dealer.muckCards(5, muckedCards);
 }
 
 
