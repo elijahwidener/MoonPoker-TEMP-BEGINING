@@ -1,18 +1,18 @@
 WORKING LIST:
-1.all players being initially made with no hand and the same deck
-2.Deck being shuffled
-3.Mucked Cards vector empty
-4.cards are delt
-5.in hand vector is created
-6.dealer is created with 5 cards 
-7. cards are displayed on screen
-8. actionsOnYou goes to the first player in the hand
-9. action prompt
-10. if x, bet = 0
-11. of r, bet = prompt
-12. if f, muck cards set bet equal to -1
-13. after whole list goes through once, check if all bets equal and repeat as necisary
-14. correct pot amount displayed
+-1.all players being initially made with no hand and the same deck  
+-2.Deck being shuffled
+-3.Mucked Cards vector empty
+-4.cards are delt
+-5.in hand vector is created
+-6.dealer is created with 5 cards 
+-7. cards are displayed on screen
+-8. actionsOnYou goes to the first player in the hand
+-9. action prompt
+-10. if x, bet = 0
+-11. of r, bet = prompt
+-12. if f, muck cards set bet equal to -1
+-13. after whole list goes through once, check if all bets equal and repeat as necisary
+-14. correct pot amount displayed
 
 Action:
 x

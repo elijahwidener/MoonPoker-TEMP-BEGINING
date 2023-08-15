@@ -22,8 +22,8 @@ class Player{
         };
 
         //mainly for testing, shows the cards
-        void showCards(int numberOfCards){
-            for(int i= 0; i < numberOfCards; i++ ){
+        void showCards(int index, int numberOfCards){
+            for(int i= index; i < numberOfCards; i++ ){
                 cout << hand[i] << ",";
             }
             cout << endl;

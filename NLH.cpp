@@ -46,21 +46,27 @@ void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand, v
         inHand.push_back(players[i]);      //put the player in the hand
     }
     dealer.dealCards(5);
-
+    int pot = 0;
 
     //(FOR TESTING) Show cards 
     for(int i = 0; i < 6; i++) {
-        players[i].showCards(NLHNumCards);
+        players[i].showCards(0,NLHNumCards);
     }
     
     cout << "we got here" << endl;
-
-    int pot = playerActions(inHand, muckedCards, NLHNumCards);
-
-    cout << pot;
     
-    //Show the board
-    dealer.showCards(5);
+    //preflop
+    pot += playerActions(inHand, muckedCards, NLHNumCards);
+    dealer.setBet(pot);
+
+    //flop
+    dealer.showCards(0,3);
+    
+    //turn
+    dealer.showCards(3,4);
+    
+    //river
+    dealer.showCards(4,5);
 
     //Muck player and dealer cards
     dealer.muckCards(5, muckedCards);
