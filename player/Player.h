@@ -8,14 +8,16 @@ class Player{
         //Create the player Constructor. Calls a deck and a desired number of cards. 
                 //In the future will potentially need to call more, like a pot size, or stack size
                 //Will also need a position to be held by each player, and be able to rotate position
-        Player(Deck& deck, int numberOfCards, int bet) : deck(deck) {
+        Player(Deck& deck, int numberOfCards, int bet) : deck(&deck), numberOfCards(numberOfCards), bet(bet) {
             dealCards(numberOfCards);
         }
+
+
 
         //Deals a player two distinct random cards using the Deck class
         void dealCards( int numberOfCards){
             for(int i= 0; i < numberOfCards; i++ ){
-                hand.push_back(deck.deal());
+                hand.push_back(deck->deal());
             }
         };
 
@@ -51,8 +53,8 @@ class Player{
             }
             cout << "'r' to raise " << endl;
             cout << "'f' to fold " << endl;
-            cout << endl;
             cin >> playerAction;
+            cout << "------------------"<< endl;
 
 
         switch(playerAction) {
@@ -100,7 +102,7 @@ class Player{
     private:
         int bet;
         int numberOfCards;
-        Deck& deck;
+        Deck* deck;
         std::vector<Card> hand;
         std::vector<Card> muckedCards;
 };
@@ -108,4 +110,4 @@ class Player{
 //to create a player now, you would write:
 //Deck deck
 //numCards
-// Player player1(deck, numCards)
+// Player player1(deck, numCards, 0)

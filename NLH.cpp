@@ -2,6 +2,8 @@
 
 
 void playGame(Player&, vector<Player>&, vector<Player>&, vector<Card>&, Deck&, int);
+int playerActions(vector<Player>& , vector<Card>& , int);
+bool allBetsEqual(vector<Player>, int );
 
 main(){
 
@@ -21,9 +23,7 @@ main(){
         players.push_back(Player(deck, 0, 0));
     }
 
-    for (int k = 0; k < 3; k++){
-        playGame(dealer, players, inHand, muckedCards, deck, NLHNumCards);
-    }
+    playGame(dealer, players, inHand, muckedCards, deck, NLHNumCards);
 
     return 0;
 
@@ -47,10 +47,17 @@ void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand, v
     }
     dealer.dealCards(5);
 
+
     //(FOR TESTING) Show cards 
     for(int i = 0; i < 6; i++) {
         players[i].showCards(NLHNumCards);
     }
+    
+    cout << "we got here" << endl;
+
+    int pot = playerActions(inHand, muckedCards, NLHNumCards);
+
+    cout << pot;
     
     //Show the board
     dealer.showCards(5);
@@ -63,42 +70,52 @@ void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand, v
 }
 
 
-void playerActions(vector<Player>& inHand, vector<Card>& muckedCards, int bet, int NLHNumCards){
-    int currentBet;
-    
+int playerActions(vector<Player>& inHand, vector<Card>& muckedCards, int NLHNumCards){
+    int currentBet = 0;
+    int pot = 0;
     auto actionsOnYou = inHand.begin();
 
     while(actionsOnYou != inHand.end()){
-        actionsOnYou->setBet(actionsOnYou->action(muckedCards, bet, NLHNumCards));
+        actionsOnYou->setBet(actionsOnYou->action(muckedCards, currentBet, NLHNumCards));
         if(actionsOnYou->getBet() == -1){
             //Remove the player from in the hand
-            inHand.erase(actionsOnYou);
+            actionsOnYou = inHand.erase(actionsOnYou);
+            //no need to increment irrerator since When you erase an element, the iterator becomes invalidated
         }
         else{
             currentBet = actionsOnYou->getBet();
             ++actionsOnYou;
-            //Add bet to pot
+            pot += currentBet;
         }
     }  
         
     while(!allBetsEqual(inHand, currentBet)){
+        actionsOnYou = inHand.begin();
         while(actionsOnYou != inHand.end()){
-            actionsOnYou->setBet(actionsOnYou->action(muckedCards, bet, NLHNumCards));
-            if(actionsOnYou->getBet() == -1){
-                //Remove the player from in the hand
-                inHand.erase(actionsOnYou);
+            //check if player is not equal to bet
+            if (currentBet != actionsOnYou->getBet()){
+                actionsOnYou->setBet(actionsOnYou->action(muckedCards, currentBet, NLHNumCards));
+                
+                if(actionsOnYou->getBet() == -1){
+                    //Remove the player from in the hand
+                    actionsOnYou = inHand.erase(actionsOnYou);
+                }
+                else{
+                    currentBet = actionsOnYou->getBet();
+                    ++actionsOnYou;
+                    pot += currentBet;
+                }
             }
             else{
-                currentBet = actionsOnYou->getBet();
                 ++actionsOnYou;
-                //Add bet to pot
             }
         }
+        // Reset the iterator again for the next iteration of the outer loop.
+            //This is for check raises
+        actionsOnYou = inHand.begin();
     }
+    return pot;
 
-    //create a function that checks if all bets are equal
-
-    //while allBetsEqual is false, ask the players in the hand who dont equal the current bet again
 }
 
 
@@ -110,18 +127,5 @@ bool allBetsEqual(vector<Player> inHand, int currentBet){
     }
     return true;
 }
-
-
-/*void takeAction(vector<Player>& players, vector<Card>& muckedCards, int bet, int NLHNumCards){
-    player.setBet(player.action(muckedCards, bet, NLHNumCards));
-        if(player.getBet() == -1){
-            //Remove the player from in the hand
-            inHand.pop(player);
-        }
-        else{
-            currentBet = player.getBet();
-            //Add bet to pot
-        }
-}*/
 
 
