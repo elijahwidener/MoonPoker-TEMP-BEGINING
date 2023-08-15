@@ -1,9 +1,11 @@
 #include "player\Player.h"
 
 
-void playGame(Player&, vector<Player>&, vector<Player>&, vector<Card>&, Deck&, int);
+void playGame(Player&, vector<Player>&, vector<Player>&, vector<Card>&,
+            Deck&, int);
 int playerActions(vector<Player>& , vector<Card>& , int);
 bool allBetsEqual(vector<Player>, int );
+void gameAction(Player&, vector<Player>&, vector<Card>&, int, int);
 
 main(){
 
@@ -30,9 +32,10 @@ main(){
 }
 
 
-void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand, vector<Card>& muckedCards, 
-        Deck& deck, int NLHNumCards){
-
+void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand, 
+            vector<Card>& muckedCards, 
+    
+    Deck& deck, int NLHNumCards){
     
 
     //Shuffle the deck with the mucked cards
@@ -54,20 +57,13 @@ void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand, v
     }
     
     cout << "we got here" << endl;
-    
-    //preflop
-    pot += playerActions(inHand, muckedCards, NLHNumCards);
-    dealer.setBet(pot);
 
-    //flop
-    dealer.showCards(0,3);
-    
-    //turn
-    dealer.showCards(3,4);
-    
-    //river
-    dealer.showCards(4,5);
 
+//change to run while there is more than one player in hand
+    gameAction(dealer, inHand, muckedCards, NLHNumCards, pot);
+
+
+//Change to players still in hand muck
     //Muck player and dealer cards
     dealer.muckCards(5, muckedCards);
     for(int i = 0; i < 6; i++) {
@@ -134,4 +130,20 @@ bool allBetsEqual(vector<Player> inHand, int currentBet){
     return true;
 }
 
-
+void gameAction(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCards, 
+                int NLHNumCards, int pot){
+                        pot += playerActions(inHand, muckedCards, NLHNumCards);
+    dealer.setBet(pot);
+    //flop
+    dealer.showCards(0,3);
+    pot += playerActions(inHand, muckedCards, NLHNumCards);
+    dealer.setBet(pot);
+    //turn
+    dealer.showCards(3,4);
+    pot += playerActions(inHand, muckedCards, NLHNumCards);
+    dealer.setBet(pot);
+    //river
+    dealer.showCards(4,5);
+    pot += playerActions(inHand, muckedCards, NLHNumCards);
+    dealer.setBet(pot);
+}
