@@ -5,11 +5,9 @@ class Player{
     
     public:
 
-        int stack;//Change back to priv after testing
 
-        //Create the player Constructor. Calls a deck and a desired number of cards. 
-                //In the future will potentially need to call more, like a pot size, or stack size
-                //Will also need a position to be held by each player, and be able to rotate position
+
+        //Create the player Constructor. 
         Player(Deck& deck, int numberOfCards, int bet, int stack) 
             : deck(&deck), numberOfCards(numberOfCards), bet(bet), stack(stack), totalBetInRound(0) {
             dealCards(numberOfCards);
@@ -31,6 +29,7 @@ class Player{
             }
             cout << endl;
         }
+        
         //puts cards into the muck pile, and removes them from the hand. 
         void muckCards(int numberOfCards, vector<Card>& muckedCards){
             
@@ -41,8 +40,7 @@ class Player{
             }
         };
 
-        
-
+        //Asks player for action, handles Check, Call, Raise, Fold
         int action(vector<Card>& muckedCards, int bet, int numberOfCards, int previousBet, Player& self){
             
             int minRaise = std::max(1,(bet + 2 * (bet - previousBet)));
@@ -94,44 +92,46 @@ class Player{
         }
     }
 
-    //Set bet
-    void setBet(int newBet) {
-        bet = newBet;
-    }
-    //Get Bet
-    int getBet(){
-        return bet;
-    }
-    void resetBetting(){
-        bet = 0;
-        totalBetInRound = 0;
-    }
-    int getTotalBetInRound(){
-        return totalBetInRound;
-    }
+        //Set Bet
+        void setBet(int newBet) {
+            bet = newBet;
+        }
 
-    void minusStack(int bet){
-        stack -= bet;
-    }
+        //Get Bet
+        int getBet(){
+            return bet;
+        }
+        
+        //Reset Bet and totalBetInRound
+        void resetBetting(){
+            bet = 0;
+            totalBetInRound = 0;
+        }
 
-    void addToStack(int currentBet, Player& player){
-        int difference = currentBet - player.totalBetInRound;
-        player.totalBetInRound = currentBet;
+        //Get Total Bet In Round
+        int getTotalBetInRound(){
+            return totalBetInRound;
+        }
 
-        //Add to stack
-        stack += difference;
-    }
+        //Remove chips from Stack
+        void minusStack(int bet){
+            stack -= bet;
+        }
+
+        //Add chips to Stack
+        void addToStack(int currentBet, Player& player){
+            int difference = currentBet - player.totalBetInRound;
+            player.totalBetInRound = currentBet;
+
+            //Add to stack
+            stack += difference;
+        }
         
 
 
     private:
-        int numberOfCards, bet, totalBetInRound;
+        int numberOfCards, bet, stack, totalBetInRound;
         Deck* deck;
         std::vector<Card> hand;
         std::vector<Card> muckedCards;
 };
-
-//to create a player now, you would write:
-//Deck deck
-//numCards
-// Player player1(deck, numCards, 0)

@@ -34,9 +34,7 @@ main(){
 
 
 void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand, 
-            vector<Card>& muckedCards, 
-    
-    Deck& deck, int NLHNumCards){
+            vector<Card>& muckedCards, Deck& deck, int NLHNumCards){
     
 
     //Shuffle the deck with the mucked cards
@@ -146,22 +144,16 @@ void gameAction(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCard
     //flop
     dealer.showCards(0,3);
     cout << endl;
-    cout << dealer.stack << endl;
     playerActions(dealer, inHand, muckedCards, NLHNumCards);
     
     //turn
     dealer.showCards(3,4);
     cout << endl;
-    cout << dealer.stack << endl;
     playerActions(dealer, inHand, muckedCards, NLHNumCards);
     
     //river
     dealer.showCards(4,5);
     cout << endl;
-    cout << dealer.stack << endl;
     playerActions(dealer, inHand, muckedCards, NLHNumCards);
-
-    cout << endl;
-    cout << dealer.stack << endl;
     
 }
