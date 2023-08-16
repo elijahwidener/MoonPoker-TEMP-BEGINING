@@ -3,7 +3,7 @@
 
 void playGame(Player&, vector<Player>&, vector<Player>&, vector<Card>&,
             Deck&, int);
-int playerActions(vector<Player>& , vector<Card>& , int);
+void playerActions(Player&, vector<Player>&, vector<Card>& , int);
 bool allBetsEqual(vector<Player>, int );
 void gameAction(Player&, vector<Player>&, vector<Card>&, int, int);
 
@@ -12,17 +12,18 @@ main(){
     Deck deck;
     int NLHNumCards = 2;
     int zeroBet = 0;
+    int tempStack = 100;
     std::vector<Player> players;
     std::vector<Player> inHand;
     std::vector<Card> muckedCards;
 
 
     //Create the dealer, which will also be the board
-    Player dealer(deck, 0, 0);
+    Player dealer(deck, 0, zeroBet, 0);
 
     //create 6 players with empty hands
     for(int i = 0; i < 6; i++) {
-        players.push_back(Player(deck, 0, 0));
+        players.push_back(Player(deck, 0, zeroBet, tempStack));
     }
 
     playGame(dealer, players, inHand, muckedCards, deck, NLHNumCards);
@@ -72,22 +73,23 @@ void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand,
 }
 
 
-int playerActions(vector<Player>& inHand, vector<Card>& muckedCards, int NLHNumCards){
+void playerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCards, int NLHNumCards){
     int currentBet = 0;
-    int pot = 0;
+    int previousBet = 0;
     auto actionsOnYou = inHand.begin();
 
     while(actionsOnYou != inHand.end()){
-        actionsOnYou->setBet(actionsOnYou->action(muckedCards, currentBet, NLHNumCards));
+        actionsOnYou->setBet(actionsOnYou->action(muckedCards, currentBet, NLHNumCards, previousBet, *actionsOnYou));
         if(actionsOnYou->getBet() == -1){
             //Remove the player from in the hand
             actionsOnYou = inHand.erase(actionsOnYou);
             //no need to increment irrerator since When you erase an element, the iterator becomes invalidated
         }
         else{
+            previousBet = currentBet;
             currentBet = actionsOnYou->getBet();
+            dealer.plusStack(currentBet);
             ++actionsOnYou;
-            pot += currentBet;
         }
     }  
         
@@ -96,16 +98,18 @@ int playerActions(vector<Player>& inHand, vector<Card>& muckedCards, int NLHNumC
         while(actionsOnYou != inHand.end()){
             //check if player is not equal to bet
             if (currentBet != actionsOnYou->getBet()){
-                actionsOnYou->setBet(actionsOnYou->action(muckedCards, currentBet, NLHNumCards));
+                actionsOnYou->setBet(actionsOnYou->action(muckedCards, currentBet, NLHNumCards, previousBet, *actionsOnYou));
                 
                 if(actionsOnYou->getBet() == -1){
                     //Remove the player from in the hand
                     actionsOnYou = inHand.erase(actionsOnYou);
                 }
                 else{
+                    previousBet = currentBet;
                     currentBet = actionsOnYou->getBet();
+                    dealer.plusStack(currentBet);
                     ++actionsOnYou;
-                    pot += currentBet;
+                    
                 }
             }
             else{
@@ -116,7 +120,6 @@ int playerActions(vector<Player>& inHand, vector<Card>& muckedCards, int NLHNumC
             //This is for check raises
         actionsOnYou = inHand.begin();
     }
-    return pot;
 
 }
 
@@ -132,18 +135,21 @@ bool allBetsEqual(vector<Player> inHand, int currentBet){
 
 void gameAction(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCards, 
                 int NLHNumCards, int pot){
-                        pot += playerActions(inHand, muckedCards, NLHNumCards);
-    dealer.setBet(pot);
+
+    //Preflop
+    playerActions(dealer, inHand, muckedCards, NLHNumCards);
+
     //flop
+    //set previous_bet to 0
     dealer.showCards(0,3);
-    pot += playerActions(inHand, muckedCards, NLHNumCards);
-    dealer.setBet(pot);
+    playerActions(dealer, inHand, muckedCards, NLHNumCards);
+    
     //turn
     dealer.showCards(3,4);
-    pot += playerActions(inHand, muckedCards, NLHNumCards);
-    dealer.setBet(pot);
+    playerActions(dealer, inHand, muckedCards, NLHNumCards);
+    
     //river
     dealer.showCards(4,5);
-    pot += playerActions(inHand, muckedCards, NLHNumCards);
-    dealer.setBet(pot);
+    playerActions(dealer, inHand, muckedCards, NLHNumCards);
+    
 }

@@ -8,7 +8,8 @@ class Player{
         //Create the player Constructor. Calls a deck and a desired number of cards. 
                 //In the future will potentially need to call more, like a pot size, or stack size
                 //Will also need a position to be held by each player, and be able to rotate position
-        Player(Deck& deck, int numberOfCards, int bet) : deck(&deck), numberOfCards(numberOfCards), bet(bet) {
+        Player(Deck& deck, int numberOfCards, int bet, int stack) 
+            : deck(&deck), numberOfCards(numberOfCards), bet(bet), stack(stack) {
             dealCards(numberOfCards);
         }
 
@@ -40,8 +41,9 @@ class Player{
 
         
 
-        int action(vector<Card>& muckedCards, int bet, int numberOfCards){
+        int action(vector<Card>& muckedCards, int bet, int numberOfCards, int previousBet, Player& self){
             
+            int minRaise = std::max(1,(bet + 2 * (bet - previousBet)));
             int raiseAmount = 0;
             char playerAction;
 
@@ -49,7 +51,7 @@ class Player{
                 cout << "'x' to check " << endl;
             }
             if (bet != 0){
-                cout << "'c' to call " << endl;
+                cout << "'c' to call " << raiseAmount - self.getBet() <<  endl;
             }
             cout << "'r' to raise " << endl;
             cout << "'f' to fold " << endl;
@@ -63,17 +65,19 @@ class Player{
                 break;
 
             case 'c': 
+                self.minusStack(raiseAmount - self.getBet());
                 return bet;
                 break;
 
             case 'r':
                 do {
-                    cout << "Enter raise amount (must be at least double the bet): ";
+                    cout << "Enter amount you want to raise to (must be at least double the amount raised): ";
                     cin >> raiseAmount;
-                    if (raiseAmount < 2 * bet) {
+                    if (raiseAmount >= minRaise) {
                         cout << "Raise must be double the bet or more. Please try again." << endl;
                     }
-                } while (raiseAmount < 2 * bet);
+                } while (raiseAmount < minRaise);
+                self.minusStack(bet);
                 return raiseAmount;
                 break;
 
@@ -83,7 +87,7 @@ class Player{
 
             default:
                 cout << "Invalid input! Please enter a valid action." << endl;
-                return action(muckedCards, bet, numberOfCards); // Recursive call
+                return action(muckedCards, bet, numberOfCards, previousBet, self); // Recursive call
                 break;
         }
     }
@@ -96,12 +100,19 @@ class Player{
     int getBet(){
         return bet;
     }
+
+    void minusStack(int bet){
+        stack -= bet;
+    }
+
+    void plusStack(int bet){
+        stack += bet;
+    }
         
 
 
     private:
-        int bet;
-        int numberOfCards;
+        int numberOfCards, bet, stack;
         Deck* deck;
         std::vector<Card> hand;
         std::vector<Card> muckedCards;
