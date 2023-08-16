@@ -5,6 +5,8 @@ class Player{
     
     public:
 
+        int stack;//Change back to priv after testing
+
         //Create the player Constructor. Calls a deck and a desired number of cards. 
                 //In the future will potentially need to call more, like a pot size, or stack size
                 //Will also need a position to be held by each player, and be able to rotate position
@@ -44,7 +46,7 @@ class Player{
         int action(vector<Card>& muckedCards, int bet, int numberOfCards, int previousBet, Player& self){
             
             int minRaise = std::max(1,(bet + 2 * (bet - previousBet)));
-            int callAmount = bet - self.getBet();
+            int callAmount = bet - self.getTotalBetInRound();
             char playerAction;
 
             if (bet == 0){
@@ -100,7 +102,10 @@ class Player{
     int getBet(){
         return bet;
     }
-
+    void resetBetting(){
+        bet = 0;
+        totalBetInRound = 0;
+    }
     int getTotalBetInRound(){
         return totalBetInRound;
     }
@@ -120,7 +125,7 @@ class Player{
 
 
     private:
-        int numberOfCards, bet, stack, totalBetInRound;
+        int numberOfCards, bet, totalBetInRound;
         Deck* deck;
         std::vector<Card> hand;
         std::vector<Card> muckedCards;

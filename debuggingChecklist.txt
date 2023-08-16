@@ -30,4 +30,23 @@ f
 c 
 c 
 ----
-
+pot should be 250
+----
+x
+r 100
+f 
+f
+c 
+----
+pot should be 450
+----
+x
+x
+----
+pot should be 450
+----
+r 100
+c 100
+----
+pot should be 650
+----

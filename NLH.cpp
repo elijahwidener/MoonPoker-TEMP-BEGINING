@@ -12,7 +12,7 @@ main(){
     Deck deck;
     int NLHNumCards = 2;
     int zeroBet = 0;
-    int tempStack = 100;
+    int tempStack = 1000;
     std::vector<Player> players;
     std::vector<Player> inHand;
     std::vector<Card> muckedCards;
@@ -80,6 +80,9 @@ void playerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedC
     auto actionsOnYou = inHand.begin();
 
     while(actionsOnYou != inHand.end()){
+
+        actionsOnYou->resetBetting(); //reset bet and totalBetInRound 
+
         actionsOnYou->setBet(actionsOnYou->action(muckedCards, currentBet, NLHNumCards, previousBet, *actionsOnYou));
         if(actionsOnYou->getBet() == -1){
             //Remove the player from in the hand
@@ -142,14 +145,23 @@ void gameAction(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCard
 
     //flop
     dealer.showCards(0,3);
+    cout << endl;
+    cout << dealer.stack << endl;
     playerActions(dealer, inHand, muckedCards, NLHNumCards);
     
     //turn
     dealer.showCards(3,4);
+    cout << endl;
+    cout << dealer.stack << endl;
     playerActions(dealer, inHand, muckedCards, NLHNumCards);
     
     //river
     dealer.showCards(4,5);
+    cout << endl;
+    cout << dealer.stack << endl;
     playerActions(dealer, inHand, muckedCards, NLHNumCards);
+
+    cout << endl;
+    cout << dealer.stack << endl;
     
 }
