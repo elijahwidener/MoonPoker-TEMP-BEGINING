@@ -14,14 +14,20 @@ WORKING LIST:
 -13. after whole list goes through once, check if all bets equal and repeat as necisary
 -14. correct pot amount displayed
 
-Action:
+Complex preflop Action for testing:
+        includes a reraise and a check raise
+        includes raise call fold call patter to test for "call -1"
 x
-f
-r 10
 f 
-f 
+x
+r 10 
 c
-
-----
+r 30 
+c
+r (try 40, shouldnt work, then try 60, should work)
 c 
-should end
+f  
+c 
+c 
+----
+

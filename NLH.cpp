@@ -76,6 +76,7 @@ void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand,
 void playerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCards, int NLHNumCards){
     int currentBet = 0;
     int previousBet = 0;
+    //int difference = 0;
     auto actionsOnYou = inHand.begin();
 
     while(actionsOnYou != inHand.end()){
@@ -88,7 +89,7 @@ void playerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedC
         else{
             previousBet = currentBet;
             currentBet = actionsOnYou->getBet();
-            dealer.plusStack(currentBet);
+            dealer.addToStack(currentBet, *actionsOnYou);
             ++actionsOnYou;
         }
     }  
@@ -105,10 +106,10 @@ void playerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedC
                     actionsOnYou = inHand.erase(actionsOnYou);
                 }
                 else{
-                    previousBet = currentBet;
-                    currentBet = actionsOnYou->getBet();
-                    dealer.plusStack(currentBet);
-                    ++actionsOnYou;
+                currentBet = actionsOnYou->getBet();
+                dealer.addToStack(currentBet, *actionsOnYou);
+                previousBet = currentBet;
+                ++actionsOnYou;
                     
                 }
             }
@@ -140,7 +141,6 @@ void gameAction(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCard
     playerActions(dealer, inHand, muckedCards, NLHNumCards);
 
     //flop
-    //set previous_bet to 0
     dealer.showCards(0,3);
     playerActions(dealer, inHand, muckedCards, NLHNumCards);
     

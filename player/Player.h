@@ -9,7 +9,7 @@ class Player{
                 //In the future will potentially need to call more, like a pot size, or stack size
                 //Will also need a position to be held by each player, and be able to rotate position
         Player(Deck& deck, int numberOfCards, int bet, int stack) 
-            : deck(&deck), numberOfCards(numberOfCards), bet(bet), stack(stack) {
+            : deck(&deck), numberOfCards(numberOfCards), bet(bet), stack(stack), totalBetInRound(0) {
             dealCards(numberOfCards);
         }
 
@@ -44,14 +44,14 @@ class Player{
         int action(vector<Card>& muckedCards, int bet, int numberOfCards, int previousBet, Player& self){
             
             int minRaise = std::max(1,(bet + 2 * (bet - previousBet)));
-            int raiseAmount = 0;
+            int callAmount = bet - self.getBet();
             char playerAction;
 
             if (bet == 0){
                 cout << "'x' to check " << endl;
             }
             if (bet != 0){
-                cout << "'c' to call " << raiseAmount - self.getBet() <<  endl;
+                cout << "'c' to call " << callAmount <<  endl;
             }
             cout << "'r' to raise " << endl;
             cout << "'f' to fold " << endl;
@@ -65,20 +65,20 @@ class Player{
                 break;
 
             case 'c': 
-                self.minusStack(raiseAmount - self.getBet());
+                self.minusStack(callAmount);
                 return bet;
                 break;
 
             case 'r':
                 do {
                     cout << "Enter amount you want to raise to (must be at least double the amount raised): ";
-                    cin >> raiseAmount;
-                    if (raiseAmount >= minRaise) {
+                    cin >> bet;
+                    if (bet < minRaise) {
                         cout << "Raise must be double the bet or more. Please try again." << endl;
                     }
-                } while (raiseAmount < minRaise);
+                } while (bet < minRaise);
                 self.minusStack(bet);
-                return raiseAmount;
+                return bet;
                 break;
 
             case 'f':
@@ -101,18 +101,26 @@ class Player{
         return bet;
     }
 
+    int getTotalBetInRound(){
+        return totalBetInRound;
+    }
+
     void minusStack(int bet){
         stack -= bet;
     }
 
-    void plusStack(int bet){
-        stack += bet;
+    void addToStack(int currentBet, Player& player){
+        int difference = currentBet - player.totalBetInRound;
+        player.totalBetInRound = currentBet;
+
+        //Add to stack
+        stack += difference;
     }
         
 
 
     private:
-        int numberOfCards, bet, stack;
+        int numberOfCards, bet, stack, totalBetInRound;
         Deck* deck;
         std::vector<Card> hand;
         std::vector<Card> muckedCards;
