@@ -3,7 +3,14 @@
 
 
 
-int evaluateHand(const vector<Card>& playerCards, const vector<Card>& dealerCards) {
+class PokerHandEvaluator {
+
+
+public:
+    PokerHandEvaluator() {
+    }
+
+    int evaluateHand(const vector<Card>& playerCards, const vector<Card>& dealerCards) {
     // Combine player's cards with community cards
     vector<Card> handPlusBoard = playerCards;
     handPlusBoard.insert(handPlusBoard.end(), dealerCards.begin(), dealerCards.end());
@@ -227,62 +234,54 @@ int evaluateHand(const vector<Card>& playerCards, const vector<Card>& dealerCard
     }
 
     return topFive;    
+    //pairs and trips will be at the front, kickers at the back
+    //Highest kicker will be at the back and descend from there
 }
-//Get kicker
-//sort 7 cards highest to lowest. 
-//ensure the pair, two pair, trips, quads, is always in.
-//return first then second, and so on. comparing each time. 
-//the first time one kicker is higher than another, that should be enough to determine winning hand.
+    
+    
+    
+    
+    private:
+    std::map<int, int> rankCounts; 
+    std::map<int, int> countCounts; 
 
+    // Private helper functions
+    int isStraight(const vector<int>& uniqueRanks) {
+        int consecutiveCount = 1;
+        for (int i = 1; i < uniqueRanks.size(); i++) {
+            if (uniqueRanks[i] == uniqueRanks[i-1] + 1) {
+                consecutiveCount++;
+                if (consecutiveCount == 5) {
 
-
-
-int getRank(Card card) {
-    int  rankValue = card.getRank();
-    return rankValue;
-}
-
-char getSuit(Card card){
-    return card.getSuit();
-}
-
-
-//NEED TO ADD if there is an ace, let that ace equal 1 or 13
-//wheel tester
-int isStraight(const vector<int>& uniqueRanks) {
-    int consecutiveCount = 1;
-    for (int i = 1; i < uniqueRanks.size(); i++) {
-        if (uniqueRanks[i] == uniqueRanks[i-1] + 1) {
-            consecutiveCount++;
-            if (consecutiveCount == 5) {
-
-                return uniqueRanks[i];
+                    return uniqueRanks[i];
+                }
+                
+            } else {
+                consecutiveCount = 1;
             }
-            
-        } else {
-            consecutiveCount = 1;
         }
+        return 0;
     }
-    return 0;
-}
 
+    bool isFlush(const vector<Card>& handPlusBoard) {
+        map<Card::Suit, int> suitCounts;
+        for (const Card& card : handPlusBoard) {
+            suitCounts[card.getSuit()]++;;
+        }    
+        for (const auto& [suit, count] : suitCounts) {
+            if (count >= 5) return true; 
+        }
+        return false;
 
-bool isFlush(const vector<Card>& handPlusBoard) {
-    map<Card::Suit, int> suitCounts;
-    for (const Card& card : handPlusBoard) {
-        suitCounts[card.getSuit()]++;;
-    }    
-    for (const auto& [suit, count] : suitCounts) {
-        if (count >= 5) return true; 
     }
-    return false;
+    
+    
+    int getRank(Card card) {
+        int  rankValue = card.getRank();
+        return rankValue;
+    }
 
-}
-
-//Should this be a class? then the maps can be public?
-//IDEA:
-//use this function to create a large map of every possibly hand? Would this work or be useful?
-    //if two players are equal, then add getKicker
-    //if is OK for getKicker to return the pair'd card, logic of how I calculate pair ensures this
-    //GetKicker WILL NOT work with full house. If its a full house and two players are equal, its a chop
-    //if getKicker happens 5 times, its a chop
+    char getSuit(Card card){
+        return card.getSuit();
+    }
+};
