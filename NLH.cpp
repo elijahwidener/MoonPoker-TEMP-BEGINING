@@ -125,7 +125,7 @@ void playerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedC
 
 }
 
-
+//Tests if all bets are Equal
 bool allBetsEqual(vector<Player> inHand, int currentBet){
     for (Player player : inHand){
         if(player.getBet() != currentBet){
