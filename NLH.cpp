@@ -3,10 +3,11 @@
 
 
 void playGame(Player&, vector<Player>&, vector<Player>&, vector<Card>&,
-            Deck&, int, int);
+            Deck&, int, int, int);
 void playerActions(Player&, vector<Player>&, vector<Card>& , int, int);
+void playerPreflopActions(Player&, vector<Player>&, vector<Card>& , int, int);
 bool allBetsEqual(vector<Player>, int );
-void gameAction(Player&, vector<Player>&, vector<Card>&, int, int);
+void gameAction(Player&, vector<Player>&, vector<Card>&, int, int, int);
 
 main(){
 
@@ -29,7 +30,7 @@ main(){
         players.push_back(Player(deck, 0, zeroBet, tempStack));
     }
 
-    playGame(dealer, players, inHand, muckedCards, deck, NLHNumCards, button);
+    playGame(dealer, players, inHand, muckedCards, deck, NLHNumCards, button, bigBlind);
 
     return 0;
 
@@ -37,7 +38,7 @@ main(){
 
 
 void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand, 
-            vector<Card>& muckedCards, Deck& deck, int NLHNumCards, int button){
+            vector<Card>& muckedCards, Deck& deck, int NLHNumCards, int button, int bigBlind){
     
     
     //Shuffle the deck with the mucked cards
@@ -62,7 +63,7 @@ void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand,
 
 
 //change to run while there is more than one player in hand
-    gameAction(dealer, inHand, muckedCards, NLHNumCards, button);
+    gameAction(dealer, inHand, muckedCards, NLHNumCards, button, bigBlind);
 
 
 //Change to players still in hand muck
