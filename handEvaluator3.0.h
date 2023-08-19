@@ -4,6 +4,13 @@
 
 
 
+// Function declarations
+long long evaluateHand(const vector<Card>& playerCards, const vector<Card>& dealerCards);
+long long kickers(const std::vector<int>& uniqueRanks, int numberOfKickers);
+int getRank(Card card);
+char getSuit(Card card);
+int isStraight(const vector<int>& uniqueRanks);
+bool isFlush(const vector<Card>& handPlusBoard);
 
 
 
@@ -156,7 +163,7 @@ long long evaluateHand(const vector<Card>& playerCards, const vector<Card>& deal
 }
 
 
-int kickers(const std::vector<int>& uniqueRanks, int numberOfKickers) {
+long long kickers(const std::vector<int>& uniqueRanks, int numberOfKickers) {
 
     // Sort the vector in descending order
     sort(uniqueRanks.begin(), uniqueRanks.end(), greater<int>());

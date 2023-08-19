@@ -1,3 +1,4 @@
+#pragma once
 #include "..\deck_of_cards\Deck.h"
 using namespace std;
 
@@ -29,6 +30,11 @@ class Player{
             }
             cout << endl;
         }
+
+        vector<Card> getCards(){
+            return hand;
+        }
+
         
         //puts cards into the muck pile, and removes them from the hand. 
         void muckCards(int numberOfCards, vector<Card>& muckedCards){
@@ -41,9 +47,9 @@ class Player{
         };
 
         //Asks player for action, handles Check, Call, Raise, Fold
-        int action(vector<Card>& muckedCards, int bet, int numberOfCards, int previousBet, Player& self){
+        int action(vector<Card>& muckedCards, int bet, int numberOfCards, int previousBet, Player& self, int bigBlind){
             
-            int minRaise = std::max(1,(bet + 2 * (bet - previousBet)));
+            int minRaise = std::max(bigBlind,(bet + 2 * (bet - previousBet)));
             int callAmount = bet - self.getTotalBetInRound();
             char playerAction;
 
@@ -87,7 +93,7 @@ class Player{
 
             default:
                 cout << "Invalid input! Please enter a valid action." << endl;
-                return action(muckedCards, bet, numberOfCards, previousBet, self); // Recursive call
+                return action(muckedCards, bet, numberOfCards, previousBet, self, bigBlind); // Recursive call
                 break;
         }
     }
@@ -118,14 +124,21 @@ class Player{
             stack -= bet;
         }
 
+        void winPot(Player& dealer){
+            stack += dealer.stack;
+            dealer.stack = 0;
+        }
+
         //Add chips to Stack
-        void addToStack(int currentBet, Player& player){
+        void addToPot(int currentBet, Player& player){
             int difference = currentBet - player.totalBetInRound;
             player.totalBetInRound = currentBet;
 
             //Add to stack
             stack += difference;
         }
+
+
         
 
 
