@@ -4,8 +4,8 @@
 
 void playGame(Player&, vector<Player>&, vector<Player>&, vector<Card>&,
             Deck&, int, int, int);
-void playerActions(Player&, vector<Player>&, vector<Card>& , int, int);
-void playerPreflopActions(Player&, vector<Player>&, vector<Card>& , int, int);
+void playerActions(Player&, vector<Player>&, vector<Card>& , int);
+void playerPreflopActions(Player&, vector<Player>&, vector<Card>& , int);
 bool allBetsEqual(vector<Player>, int );
 void gameAction(Player&, vector<Player>&, vector<Card>&, int, int, int);
 
@@ -47,9 +47,16 @@ void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand,
     muckedCards.clear();
 
     //deal all cards
-    for (int i = 0; i< 6; i++){
-        players[i].dealCards(NLHNumCards); //give the player cards
-        inHand.push_back(players[i]);      //put the player in the hand
+    int playersDealt = 0;
+    for (int i = button; i< 6; i++){
+        int seatIndex = (button + 1 + i) % 6;      // Calculate the player index considering the dealer position
+        players[seatIndex].dealCards(NLHNumCards); //give the player cards
+        inHand.push_back(players[seatIndex]);      //put the player in the hand
+        playersDealt++;
+        
+        if(playersDealt  == 6){
+            break; // Exit the loop when all 6 players have been dealt
+        }
     }
     dealer.dealCards(5);
 
@@ -79,11 +86,11 @@ void playGame(Player& dealer, vector<Player>& players, vector<Player>& inHand,
 }
 
 
-void playerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCards, int NLHNumCards, int button, int bigBlind){
+void playerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCards, int NLHNumCards, int bigBlind){
     int currentBet = 0;
     int previousBet = 0;
     //int difference = 0;
-    auto actionsOnYou = (inHand.begin() + (button+1));
+    auto actionsOnYou = inHand.begin();
 
     while(actionsOnYou != inHand.end()){
 
@@ -104,7 +111,7 @@ void playerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedC
     }  
         
     while(!allBetsEqual(inHand, currentBet)){
-        actionsOnYou = (inHand.begin() + (button+1));
+        actionsOnYou = inHand.begin();
         while(actionsOnYou != inHand.end()){
             //check if player is not equal to bet
             if (currentBet != actionsOnYou->getBet()){
@@ -133,20 +140,22 @@ void playerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedC
 
 }
 
-void preflopPlayerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCards, int NLHNumCards, int button, int bigBlind){
+void preflopPlayerActions(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCards, int NLHNumCards, int bigBlind){
     int currentBet = bigBlind;
     int previousBet = 0;
     //int difference = 0;
 
     //SB forced bet
-    inHand[button+1].setBet(bigBlind/2);
-    dealer.addToPot(currentBet/2, inHand[button+1]);
+    inHand[0].setBet(bigBlind/2);
+    dealer.addToPot(currentBet/2, inHand[0]);
+    //remv stack
     //BB forced bet
-    inHand[button+2].setBet(bigBlind);
-    dealer.addToPot(currentBet, inHand[button+2]);
+    inHand[1].setBet(bigBlind);
+    dealer.addToPot(currentBet, inHand[1]);
+    //rmv stack
 
 
-    auto actionsOnYou = (inHand.begin() + (button+3));
+    auto actionsOnYou = (inHand.begin() + 2);
 
     while(actionsOnYou != inHand.end()){
 
@@ -167,7 +176,7 @@ void preflopPlayerActions(Player& dealer, vector<Player>& inHand, vector<Card>& 
     }  
         
     while(!allBetsEqual(inHand, currentBet)){
-        actionsOnYou = (inHand.begin() + (button+1));
+        actionsOnYou = (inHand.begin());
         while(actionsOnYou != inHand.end()){
             //check if player is not equal to bet
             if (currentBet != actionsOnYou->getBet()){
@@ -210,31 +219,34 @@ void gameAction(Player& dealer, vector<Player>& inHand, vector<Card>& muckedCard
                 int NLHNumCards, int button, int bigBlind){
 
     //Preflop
-    preflopPlayerActions(dealer, inHand, muckedCards, NLHNumCards, button, bigBlind);
+    preflopPlayerActions(dealer, inHand, muckedCards, NLHNumCards, bigBlind);
 
     //flop
     dealer.showCards(0,3);
     cout << endl;
-    playerActions(dealer, inHand, muckedCards, NLHNumCards, button, bigBlind);
+    playerActions(dealer, inHand, muckedCards, NLHNumCards, bigBlind);
     
     //turn
-    dealer.showCards(3,4);
+    dealer.showCards(0,4);
     cout << endl;
-    playerActions(dealer, inHand, muckedCards, NLHNumCards, button, bigBlind);
+    playerActions(dealer, inHand, muckedCards, NLHNumCards, bigBlind);
     
     //river
-    dealer.showCards(4,5);
+    dealer.showCards(0,5);
     cout << endl;
-    playerActions(dealer, inHand, muckedCards, NLHNumCards, button, bigBlind);
+    playerActions(dealer, inHand, muckedCards, NLHNumCards, bigBlind);
 
     //showdown
     long long highHand = 0;
     Player* winner = &inHand[0];
-    for (int j = 0; j < inHand.size(); j++)
-        if (evaluateHand(inHand[j].getCards(), dealer.getCards()) > highHand){
-                highHand = evaluateHand(inHand[j].getCards(), dealer.getCards());
+    for (int j = 0; j < inHand.size(); j++){
+        long long k = evaluateHand(inHand[j].getCards(), dealer.getCards());
+        if (k > highHand){
+                highHand = k;
                 winner = &inHand[j];
         }
+    }
+        
 
     winner->winPot(dealer);
     

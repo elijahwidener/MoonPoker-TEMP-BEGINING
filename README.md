@@ -15,3 +15,5 @@
 # Also potentially add the ability to make it dealers' choice. 
 
 # Allow players to send things like tilt cards, or emojis to other players, like in zynga poker. These can be a premium feature. 
+
+#add functionality to be able to play against GTO bots

@@ -46,10 +46,49 @@ long long evaluateHand(const vector<Card>& playerCards, const vector<Card>& deal
 //Identifying hand type
 
     int straightStrength = isStraight(uniqueRanks);
-    vector<int> topFive;
 
     // Straight flush
-    if ((straightStrength != 0) && isFlush(handPlusBoard)) return 90000000000 + straightStrength; 
+    if ((straightStrength != 0) && isFlush(handPlusBoard)){
+
+        map<char, vector<int>> suitRanks;
+        
+        for (const Card& card : handPlusBoard) {
+            suitRanks[getSuit(card)].push_back(getRank(card));
+        }
+        
+        
+        for (auto& [suit, ranks] : suitRanks) {
+            if (ranks.size() >= 5) {
+                sort(ranks.begin(), ranks.end());
+                int consecutiveCount = 1;
+                int straightFlushStrength = 0;
+                
+                for (int i = 1; i < ranks.size(); i++) {
+                    if (ranks[i] == ranks[i-1] + 1) {
+                        consecutiveCount++;
+                        if (consecutiveCount >= 5) {
+                            straightFlushStrength = ranks[i];
+                        }
+                    } else {
+                        consecutiveCount = 1;
+                    }
+                }
+                if (straightFlushStrength != 0) return 90000000000 + straightFlushStrength; // This is a straight flush
+                
+                // Check for steel wheel
+                if (find(ranks.begin(), ranks.end(), 14) != ranks.end() &&
+                    find(ranks.begin(), ranks.end(), 2) != ranks.end() &&
+                    find(ranks.begin(), ranks.end(), 3) != ranks.end() &&
+                    find(ranks.begin(), ranks.end(), 4) != ranks.end() &&
+                    find(ranks.begin(), ranks.end(), 5) != ranks.end()) {
+                    straightFlushStrength = 5;
+                }
+                
+                if (straightFlushStrength != 0) return 90000000000 + straightFlushStrength; 
+            }
+        }
+    }
+        
 
     // Four of a kind
     if (countCounts[4] == 1){
@@ -73,9 +112,6 @@ long long evaluateHand(const vector<Card>& playerCards, const vector<Card>& deal
                 if (rank > tripsRank[0]) {
                     tripsRank[1] = tripsRank[0];
                     tripsRank[0] = rank;
-                    if(tripsRank[1] !=0){
-                        return 70000000000 + (tripsRank[0]*1000) + tripsRank[1];
-                    }
                 }
             }
             if (count == 2) {
@@ -83,9 +119,13 @@ long long evaluateHand(const vector<Card>& playerCards, const vector<Card>& deal
                     pairs[1] = pairs[0];
                     pairs[0] = rank;
                 }
-                return 70000000000 + (tripsRank[0]*1000) + pairs[0]; 
             }
         }
+        if (tripsRank[1] != 0) {
+            return 70000000000 + (tripsRank[0] * 1000) + tripsRank[1];
+        }
+
+        return 70000000000 + (tripsRank[0] * 1000) + pairs[0];
 
     }
 
@@ -152,7 +192,7 @@ long long evaluateHand(const vector<Card>& playerCards, const vector<Card>& deal
         }
         long long kickerNumber = 0;
         kickerNumber = kickers(uniqueRanks,  4);
-        return 20000000000 + kickerNumber; 
+        return 20000000000 + pairRank *100000000 + kickerNumber; 
     }
 
     //High card
@@ -195,19 +235,32 @@ char getSuit(Card card){
 //wheel tester
 int isStraight(const vector<int>& uniqueRanks) {
     int consecutiveCount = 1;
+    int straightStrength = 0;
     for (int i = 1; i < uniqueRanks.size(); i++) {
+
         if (uniqueRanks[i] == uniqueRanks[i-1] + 1) {
             consecutiveCount++;
-            if (consecutiveCount == 5) {
-
-                return uniqueRanks[i];
+            if (consecutiveCount >= 5) {
+                straightStrength = uniqueRanks[i];    
             }
             
         } else {
             consecutiveCount = 1;
         }
     }
-    return 0;
+    if(straightStrength != 0){
+        return straightStrength;
+    }
+    // Check for a wheel (A-2-3-4-5)
+    if (find(uniqueRanks.begin(), uniqueRanks.end(), 14) != uniqueRanks.end() && 
+        find(uniqueRanks.begin(), uniqueRanks.end(), 2) != uniqueRanks.end() &&
+        find(uniqueRanks.begin(), uniqueRanks.end(), 3) != uniqueRanks.end() &&
+        find(uniqueRanks.begin(), uniqueRanks.end(), 4) != uniqueRanks.end() &&
+        find(uniqueRanks.begin(), uniqueRanks.end(), 5) != uniqueRanks.end()) {
+        return 5; // Return the strength of a wheel
+    }
+    
+    return straightStrength;
 }
 
 
